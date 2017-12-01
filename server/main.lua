@@ -8,7 +8,7 @@ AddEventHandler('esx_fishing:caughtFish', function()
 	xPlayer.addInventoryItem('fish', 1)
 end)
 
-ESX.RegisterUsableItem('fishing_rod', function(source)
+ESX.RegisterUsableItem('fishingrod', function(source)
 	local xPlayer  = ESX.GetPlayerFromId(source)
 	local baitquantity = xPlayer.getInventoryItem('bait').count
 	if baitquantity > 0 then
