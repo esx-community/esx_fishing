@@ -33,6 +33,20 @@ end)
 
 function GetCar() return GetVehiclePedIsIn(GetPlayerPed(-1), false) end
 
+
+-- Init playerdata & job
+RegisterNetEvent('esx:playerLoaded')
+AddEventHandler('esx:playerLoaded', function(xPlayer)
+  PlayerData = xPlayer
+end)
+
+RegisterNetEvent('esx:setJob')
+AddEventHandler('esx:setJob', function(job)
+  PlayerData.job = job
+end)
+
+-- end init playerdata & job
+
 function GetPed() return GetPlayerPed(-1) end
 
 function text(x,y,scale,text)
@@ -99,34 +113,36 @@ end
 
 RegisterNetEvent('esx_fishing:startFishing')
 AddEventHandler('esx_fishing:startFishing', function()
+	if PlayerData.job ~= nil and PlayerData.job.name == 'fisherman' then
+		if not IsPedInAnyVehicle(GetPed(), false) then
+			if not IsPedSwimming(GetPed()) then
+				if IsEntityInWater(GetPed()) then
+					TriggerServerEvent('esx_fishing:removeInventoryItem','bait', 1)
+					if ESX.UI.Menu.IsOpen('default', 'es_extended', 'inventory') then
+						ESX.UI.Menu.Close('default', 'es_extended', 'inventory')
+					end
 
-	if not IsPedInAnyVehicle(GetPed(), false) then
-		if not IsPedSwimming(GetPed()) then
-			if IsEntityInWater(GetPed()) then
+					if ESX.UI.Menu.IsOpen('default', 'es_extended', 'inventory_item') then
+						ESX.UI.Menu.Close('default', 'es_extended', 'inventory_item')
+					end
 
-				if ESX.UI.Menu.IsOpen('default', 'es_extended', 'inventory') then
-					ESX.UI.Menu.Close('default', 'es_extended', 'inventory')
+					IsFishing = true
+					if ShowChatMSG then ESX.ShowNotification("Vous avez lancé votre appât, attendez qu'un poisson morde ...") end
+					RunCodeOnly1Time = true
+					BarAnimation = 0
+
+				else
+					ESX.ShowNotification('Action impossible, vous devez être dans l\'eau')
 				end
-
-				if ESX.UI.Menu.IsOpen('default', 'es_extended', 'inventory_item') then
-					ESX.UI.Menu.Close('default', 'es_extended', 'inventory_item')
-				end
-
-				IsFishing = true
-				if ShowChatMSG then ESX.ShowNotification("Vous avez lancé votre appât, attendez qu'un poisson morde ...") end
-				RunCodeOnly1Time = true
-				BarAnimation = 0
-
 			else
-				ESX.ShowNotification('Action impossible, vous devez être dans l\'eau')
+				ESX.ShowNotification('Action impossible')
 			end
 		else
 			ESX.ShowNotification('Action impossible')
 		end
 	else
-		ESX.ShowNotification('Action impossible')
+		ESX.ShowNotification("Vous devez etre poissonier pour pêcher.")
 	end
-
 end)
 
 RegisterNetEvent('esx_fishing:onEatFish')
