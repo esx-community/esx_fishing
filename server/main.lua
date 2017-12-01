@@ -9,7 +9,14 @@ AddEventHandler('esx_fishing:caughtFish', function()
 end)
 
 ESX.RegisterUsableItem('fishing_rod', function(source)
-	TriggerClientEvent('esx_fishing:startFishing', source)
+	local xPlayer  = ESX.GetPlayerFromId(source)
+	local baitquantity = xPlayer.getInventoryItem('bait').count
+	if baitquantity > 0 then
+		TriggerClientEvent('esx_fishing:startFishing', source)
+		xPlayer.removeInventoryItem('bait', 1)
+	else 
+		TriggerClientEvent('esx:showNotification', source, "Tu n'as pas assez de appats de poissons.")
+	end
 end)
 
 ESX.RegisterUsableItem('fish', function(source)
